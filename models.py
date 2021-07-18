@@ -38,8 +38,8 @@ class Array(Base, ModelAdmin):
     __tablename__ = "arrays"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    in_arr = Column(ARRAY)
-    out_arr = Column(ARRAY)
+    in_arr = Column(String)
+    out_arr = Column(String)
     create_date = Column(DateTime, server_default=func.now())
     __mapper_args__ = {"eager_defaults": True}
 
@@ -52,42 +52,3 @@ class Array(Base, ModelAdmin):
             f"create_date={self.create_date}, "
             f")>"
         )
-
-class User(Base, ModelAdmin):
-    __tablename__ = "users"
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    full_name = Column(String)
-    posts = relationship("Post")
-
-    # required in order to acess columns with server defaults
-    # or SQL expression defaults, subsequent to a flush, without
-    # triggering an expired load
-    __mapper_args__ = {"eager_defaults": True}
-
-    def __repr__(self):
-        return (
-            f"<{self.__class__.__name__}("
-            f"id={self.id}, "
-            f"full_name={self.full_name}, "
-            f"posts={self.posts}, "
-            f")>"
-        )
-
-
-class Post(Base, ModelAdmin):
-    __tablename__ = "posts"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(ForeignKey("users.id"))
-    data = Column(String)
-
-    def __repr__(self):
-        return (
-            f"<{self.__class__.__name__}(" f"id={self.id}, " f"data={self.data}" f")>"
-        )
-
-    @classmethod
-    async def filter_by_user_id(cls, user_id):
-        query = select(cls).where(cls.user_id == user_id)
-        posts = await async_db_session.execute(query)
-        return posts.scalars().all()
