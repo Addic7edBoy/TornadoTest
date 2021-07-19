@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  basic:
+    build:
+      context: .
+    volumes:
+        - ./:/basic
+    links:
+      - postgres
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres
+      DB_USER: max
+      DB_PASS: "8883868"
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_NAME: max
+    ports:
+      - '8888:8888'
+
+  postgres:
+    image: postgres:12
+    environment:
+      POSTGRES_USER: max
+      POSTGRES_PASSWORD: 8883868
+      POSTGRES_DATABASE: max
+    volumes:
+      - pg:/var/lib/postgresql/data
+
+volumes:
+  pg:
